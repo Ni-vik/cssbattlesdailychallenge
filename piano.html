@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piano Keyboard</title>
+    <style>
+        body {
+            background: #998235;
+            display: grid;
+            justify-items: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .rect {
+            width: 540px;
+            height: 300px;
+            background: #191919;
+            border-radius: 30px;
+            display: grid;
+            align-items: center;
+            justify-items: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .key {
+            width: 95%;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 0 10px;
+        }
+        
+        .r1 {
+            width: 60px;
+            height: 210px;
+            background: #FFFFFF;
+            margin-bottom: 15px;
+            border-radius: 21px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.1s ease;
+            cursor: pointer;
+        }
+        
+        .r1:hover {
+            background: #f0f0f0;
+            transform: translateY(2px);
+        }
+        
+        .r1:active {
+            background: #e0e0e0;
+            transform: translateY(4px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .black-key {
+            width: 45px;
+            height: 105px;
+            background: #191919;
+            position: absolute;
+            top: 45px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+        
+        .black-key:hover {
+            background: #333;
+            transform: translateY(2px);
+        }
+        
+        .black-key:active {
+            background: #555;
+            transform: translateY(4px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+        
+        .k1 {
+            left: calc(50% - 195px);
+        }
+        
+        .k2 {
+            left: calc(50% - 120px);
+        }
+        
+        .k3 {
+            left: calc(50% + 30px);
+        }
+        
+        .k4 {
+            left: calc(50% + 105px);
+        }
+        
+        .k5 {
+            left: calc(50% + 180px);
+        }
+        
+        /* Responsive design for smaller laptops */
+        @media (max-width: 1200px) {
+            .rect {
+                width: 450px;
+                height: 250px;
+            }
+            
+            .r1 {
+                width: 50px;
+                height: 175px;
+            }
+            
+            .black-key {
+                width: 38px;
+                height: 88px;
+            }
+            
+            .k1 {
+                left: calc(50% - 162px);
+            }
+            
+            .k2 {
+                left: calc(50% - 100px);
+            }
+            
+            .k3 {
+                left: calc(50% + 25px);
+            }
+            
+            .k4 {
+                left: calc(50% + 87px);
+            }
+            
+            .k5 {
+                left: calc(50% + 150px);
+            }
+
+        }
+        
+        /* For very small laptop screens */
+        @media (max-width: 900px) {
+            .rect {
+                width: 360px;
+                height: 200px;
+            }
+            
+            .r1 {
+                width: 40px;
+                height: 140px;
+            }
+            
+            .black-key {
+                width: 30px;
+                height: 70px;
+            }
+            
+            .k1 {
+                left: calc(50% - 130px);
+            }
+            
+            .k2 {
+                left: calc(50% - 80px);
+            }
+            
+            .k3 {
+                left: calc(50% + 20px);
+            }
+            
+            .k4 {
+                left: calc(50% + 70px);
+            }
+            
+            .k5 {
+                left: calc(50% + 120px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Audio context for generating piano sounds
+        let audioContext;
+        let masterGain;
+
+        // Initialize audio context
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                masterGain = audioContext.createGain();
+                masterGain.gain.value = 0.3;
+                masterGain.connect(audioContext.destination);
+            }
+        }
+
+        // Piano note frequencies (C4 to B4)
+        const noteFrequencies = {
+            'C4': 261.63,
+            'C#4': 277.18,
+            'D4': 293.66,
+            'D#4': 311.13,
+            'E4': 329.63,
+            'F4': 349.23,
+            'F#4': 369.99,
+            'G4': 392.00,
+            'G#4': 415.30,
+            'A4': 440.00,
+            'A#4': 466.16,
+            'B4': 493.88,
+            'C5' : 523.25
+        };
+
+        // Create piano sound using oscillators
+        function playNote(frequency, duration = 2.0) {
+            if (!audioContext) return;
+
+            // Create multiple oscillators for richer sound
+            const oscillators = [];
+            const gains = [];
+
+            // Fundamental frequency
+            const osc1 = audioContext.createOscillator();
+            const gain1 = audioContext.createGain();
+            osc1.type = 'triangle';
+            osc1.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            gain1.gain.setValueAtTime(0.4, audioContext.currentTime);
+            osc1.connect(gain1);
+            oscillators.push(osc1);
+            gains.push(gain1);
+
+            // Second harmonic
+            const osc2 = audioContext.createOscillator();
+            const gain2 = audioContext.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(frequency * 2, audioContext.currentTime);
+            gain2.gain.setValueAtTime(0.1, audioContext.currentTime);
+            osc2.connect(gain2);
+            oscillators.push(osc2);
+            gains.push(gain2);
+
+            // Third harmonic
+            const osc3 = audioContext.createOscillator();
+            const gain3 = audioContext.createGain();
+            osc3.type = 'sine';
+            osc3.frequency.setValueAtTime(frequency * 3, audioContext.currentTime);
+            gain3.gain.setValueAtTime(0.05, audioContext.currentTime);
+            osc3.connect(gain3);
+            oscillators.push(osc3);
+            gains.push(gain3);
+
+            // Connect all to master gain with envelope
+            gains.forEach(gain => {
+                const envelope = audioContext.createGain();
+                envelope.gain.setValueAtTime(0, audioContext.currentTime);
+                envelope.gain.linearRampToValueAtTime(1, audioContext.currentTime + 0.01);
+                envelope.gain.exponentialRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
+                envelope.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                gain.connect(envelope);
+                envelope.connect(masterGain);
+            });
+
+            // Start and stop oscillators
+            const now = audioContext.currentTime;
+            oscillators.forEach(osc => {
+                osc.start(now);
+                osc.stop(now + duration);
+            });
+        }
+
+        // Note mapping for white and black keys
+        const whiteKeyNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4','C5'];
+        const blackKeyNotes = ['C#4', 'D#4', 'F#4', 'G#4', 'A#4'];
+
+        // Add click handlers when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enable audio on first user interaction
+            document.body.addEventListener('click', initAudio, { once: true });
+
+            // White keys
+            const whiteKeys = document.querySelectorAll('.r1');
+            whiteKeys.forEach((key, index) => {
+                key.addEventListener('click', () => {
+                    playNote(noteFrequencies[whiteKeyNotes[index]]);
+                });
+            });
+
+            // Black keys
+            const blackKeys = document.querySelectorAll('.black-key');
+            blackKeys.forEach((key, index) => {
+                key.addEventListener('click', () => {
+                    playNote(noteFrequencies[blackKeyNotes[index]]);
+                });
+            });
+
+            // Keyboard support
+            document.addEventListener('keydown', (e) => {
+                const keyMap = {
+                    'a': 'C4', 'w': 'C#4', 's': 'D4', 'e': 'D#4', 'd': 'E4',
+                    'f': 'F4', 't': 'F#4', 'g': 'G4', 'y': 'G#4', 'h': 'A4',
+                    'u': 'A#4', 'j': 'B4', 'k' : 'C5'
+                };
+                
+                const note = keyMap[e.key.toLowerCase()];
+                if (note && !e.repeat) {
+                    playNote(noteFrequencies[note]);
+                    
+                    // Visual feedback
+                    const keyElement = note.includes('#') ? 
+                        blackKeys[blackKeyNotes.indexOf(note)] :
+                        whiteKeys[whiteKeyNotes.indexOf(note)];
+                    
+                    if (keyElement) {
+                        keyElement.style.transform = note.includes('#') ? 
+                            'translateY(4px)' : 'translateY(4px)';
+                        setTimeout(() => {
+                            keyElement.style.transform = '';
+                        }, 100);
+                    }
+                }
+            });
+        });
+    </script>
+    <div class="rect">
+        <div class="black-key k1"></div>
+        <div class="black-key k2"></div>
+        <div class="black-key k3"></div>
+        <div class="black-key k4"></div>
+        <div class="black-key k5"></div>
+        <div class="key">
+            <div class="r1"></div>
+            <div class="r1"></div>
+            <div class="r1"></div>
+            <div class="r1"></div>
+            <div class="r1"></div>
+            <div class="r1"></div>
+            <div class="r1"></div>
+            <div class="r1"></div>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px; color: #333; font-family: Arial, sans-serif;">
+        <p><strong>Click keys to play or use keyboard:</strong></p>
+        <p>White keys: A S D F G H J | Black keys: W E T Y U</p>
+    </div>
+</body>
+</html>

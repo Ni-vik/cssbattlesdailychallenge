@@ -1,0 +1,70 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scaled Design</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: grid;
+            align-content: center;
+            justify-content: center;
+            background: #6CB3A9;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        
+        [contain] {
+            height: 600px;
+            width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        [a] {
+            width: 600px;
+            height: 300px;
+            background: #D25B70;
+            border-radius: 1200px 1200px 0px 0px;
+        }
+        
+        [b] {
+            width: 600px;
+            height: 300px;
+            background: #FFFFFF;
+            border-radius: 0px 0px 1200px 1200px;
+        }
+        
+        [r] {
+            width: 540px;
+            height: 60px;
+            background: #781728;
+        }
+        
+        [c] {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: #F6DF96;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 0 30px #781728;
+        }
+    </style>
+</head>
+<body>
+    <div contain>
+        <div a></div>
+        <div r></div>
+        <div b></div>
+    </div>
+    <div c></div>
+</body>
+</html>

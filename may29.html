@@ -1,0 +1,70 @@
+<div class="container">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+    <div class="circle circle-4"></div>
+    <div class="circle circle-5"></div></div><style>body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #F58220;
+    }
+    .container {
+        width: 400px;
+        height: 300px;
+        background: #F58220;
+        position: relative;
+        overflow: hidden;
+    }
+    .circle {
+        position: absolute;
+        border-radius: 50%;
+    }
+    /* Top left white circle (partially visible) */
+    .circle-1 {
+        width: 110px;
+        height: 120px;
+        background: white;
+        top: 10px;
+        left: -50px;
+    }
+
+    /* Center dark circle */
+    .circle-2 {
+        width: 80px;
+        height: 80px;
+        background: #282828;
+        top: 110px;
+        left: 160px;
+    }
+
+    /* Top right dark circle (partially visible) */
+    .circle-3 {
+        width: 110px;
+        height: 120px;
+        background: #282828;
+        top: 10px;
+        right: -50px;
+    }
+
+    /* Bottom left dark circle (partially visible) */
+    .circle-4 {
+        width: 110px;
+        height: 120px;
+        background: #282828;
+        bottom: 10px;
+        left: -50px;
+    }
+
+    /* Bottom right white circle (partially visible) */
+    .circle-5 {
+        width: 110px;
+        height: 120px;
+        background: white;
+        bottom: 10px;
+        right: -50px;
+    }
+</style>
